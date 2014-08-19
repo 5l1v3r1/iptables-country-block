@@ -1,0 +1,5 @@
+#Sample /etc/crontab file
+ 	
+*  *  *  *  1  /root/.iptables_rules/countryban.sh
+
+
