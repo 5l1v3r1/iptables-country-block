@@ -1,9 +1,11 @@
 #!/bin/bash
 IPT=iptables
-WORKDIR="/root/.iptables_rules" #herhangi bir dizin de olur fakat benim önerim bu
-ISO="cn" #engellenmek istenen ülkenin iki harfli ISO kodu  
-BLOCKDB="$ISO.zone"   
-function iptables_reset {  
+WORKDIR="/root/.iptables_rules" #You can set workdir in another directory. 
+ISO="cn" #two letters ISO code of country  
+BLOCKDB="$ISO.zone"
+IPS=$(grep -Ev "^#" $BLOCKDB) #Select ip (it will can change for another service)
+function iptables_reset {  #Warning! : This function will Reset your iptables statement. 
+#Please backup your iptables settings and write them  on "Another iptables commands".   
 $IPT -F
 $IPT -X
 $IPT -t nat -F
@@ -16,13 +18,14 @@ $IPT -P FORWARD ACCEPT
 }
 cd $WORKDIR
 iptables_reset
-wget www.ipdeny.com/ipblocks/data/countries/$ISO.zone    
+wget www.ipdeny.com/ipblocks/data/countries/$ISO.zone 
+#I use ipdeny.com service for this. If you find better one, you can use it. 
 if [ -f $ISO.zone ]; then 
-  IPS=$(grep -Ev "^#" $BLOCKDB)
   for i in $IPS
   do
-    iptables -A INPUT -s $i -j DROP   #Giriş
-    iptables -A OUTPUT -d $i -j DROP  #Çıkış 
+    iptables -A INPUT -s $i -j DROP   
+    iptables -A OUTPUT -d $i -j DROP
+    #Another iptables commands
   done
   fi
-rm $WORKDIR/$SO.zone
+rm $WORKDIR/$SO.zone #remove zonefiles (for automatic crontab update)
