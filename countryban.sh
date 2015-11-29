@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 IPT=iptables
 WORKDIR="/root/.iptables_rules" #You can set workdir in another directory. 
 ISO="cn" #two letters ISO code of country  
@@ -29,3 +31,4 @@ if [ -f $ISO.zone ]; then
   done
   fi
 rm $WORKDIR/$SO.zone #remove zonefiles (for automatic crontab update)
+exit
